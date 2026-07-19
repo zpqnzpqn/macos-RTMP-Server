@@ -43,7 +43,12 @@
     "mac",
     "electron",
     "apple-silicon",
-    "arm64"
+    "arm64",
+    "macos",
+    "menubar",
+    "stream",
+    "live-streaming",
+    "rtmp-server"
   ],
   "author": "zpqnzpqn",
   "license": "MIT",
