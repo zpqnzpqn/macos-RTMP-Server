@@ -1,9 +1,34 @@
 import SwiftUI
 import AppKit
+@MainActor
+class AppDelegate: NSObject, NSApplicationDelegate {
+    let appState = AppState()
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        let defaults = UserDefaults.standard
+        let mode = defaults.string(forKey: "appMode") ?? "menubar"
+        
+        if mode == "menubar" {
+            // Hide the main window if in menubar mode
+            for window in NSApplication.shared.windows {
+                if window.title == "Local RTMP Server" || window.title == "" {
+                    window.close()
+                }
+            }
+        }
+        
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        let isAutoDown = event?.eventID == kAEOpenApplication && event?.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == 1635087460
+        
+        if !isAutoDown {
+            appState.startServer()
+        }
+    }
+}
 
 @main
 struct LocalRTMPServerApp: App {
-    @StateObject private var appState = AppState()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
         // Set the activation policy on start based on saved settings
@@ -23,11 +48,11 @@ struct LocalRTMPServerApp: App {
         // Main window
         Window("Local RTMP Server", id: "main") {
             ContentView()
-                .environmentObject(appState)
+                .environmentObject(appDelegate.appState)
                 .onDisappear {
                     // Quit app when window closed if running in dock mode
-                    if appState.appMode == "dock" {
-                        appState.stopServer()
+                    if appDelegate.appState.appMode == "dock" {
+                        appDelegate.appState.stopServer()
                         NSApplication.shared.terminate(nil)
                     }
                 }
@@ -38,14 +63,14 @@ struct LocalRTMPServerApp: App {
         MenuBarExtra {
             VStack(spacing: 0) {
                 ContentView()
-                    .environmentObject(appState)
+                    .environmentObject(appDelegate.appState)
                 
                 Divider()
                 
                 HStack {
                     Spacer()
                     Button("Quit") {
-                        appState.stopServer()
+                        appDelegate.appState.stopServer()
                         NSApplication.shared.terminate(nil)
                     }
                     .buttonStyle(.bordered)
@@ -57,7 +82,7 @@ struct LocalRTMPServerApp: App {
             }
             .frame(width: 480, height: 530)
         } label: {
-            Image(systemName: appState.isStreaming ? "video.circle.fill" : "video.circle")
+            Image(systemName: appDelegate.appState.isStreaming ? "video.circle.fill" : "video.circle")
         }
         .menuBarExtraStyle(.window)
     }

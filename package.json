@@ -1,7 +1,7 @@
 {
   "name": "mac-local-rtmp-server",
   "productName": "Local RTMP Server",
-  "version": "2.0.0",
+  "version": "3.0",
   "description": "Local RTMP streaming server for macOS (Apple Silicon / ARM64)",
   "main": "main.js",
   "build": {

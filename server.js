@@ -1,5 +1,7 @@
 const NodeMediaServer = require('node-media-server');
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const { execSync } = require('child_process');
 
 // Parse command line arguments
@@ -42,6 +44,7 @@ function getFFmpegPath() {
 }
 
 const config = {
+  logType: 1, // 0 = none, 1 = error/status, 2 = info, 3 = debug, 4 = trace (1 significantly reduces IPC IPC latency)
   rtmp: {
     port: rtmpPort,
     chunk_size: 60000,
@@ -51,7 +54,7 @@ const config = {
   },
   http: {
     port: httpPort,
-    mediaroot: './media',
+    mediaroot: path.join(os.tmpdir(), 'local-rtmp-server-media'),
     allow_origin: '*'
   },
   trans: {
@@ -61,7 +64,8 @@ const config = {
         app: 'live',
         ac: 'aac',
         hls: true,
-        hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]'
+        hlsFlags: '[hls_time=1:hls_list_size=2:hls_flags=delete_segments]',
+        dash: false
       }
     ]
   }

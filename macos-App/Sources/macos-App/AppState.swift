@@ -6,6 +6,35 @@ import Combine
 
 @MainActor
 class AppState: ObservableObject {
+    // Helper to get local IP addresses
+    func getLocalIPAddresses() -> [String] {
+        var addresses = [String]()
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0 else { return [] }
+        guard let firstAddr = ifaddr else { return [] }
+        
+        for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ptr.pointee
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            
+            if addrFamily == UInt8(AF_INET) {
+                let name = String(cString: interface.ifa_name)
+                if name != "lo0" {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                                &hostname, socklen_t(hostname.count),
+                                nil, socklen_t(0), NI_NUMERICHOST)
+                    let address = String(cString: hostname)
+                    if !address.isEmpty {
+                        addresses.append(address)
+                    }
+                }
+            }
+        }
+        freeifaddrs(ifaddr)
+        return addresses
+    }
+
     @Published var streamKeyType: String = "random" { didSet { saveSettings() } }
     @Published var fixedStreamKey: String = "mystreamkey" { didSet { saveSettings() } }
     @Published var randomStreamKey: String = ""
@@ -20,6 +49,7 @@ class AppState: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var activeStreamName: String = ""
     
+    private var isLoadingSettings = false
     private var process: Process?
     private var stdoutPipe: Pipe?
     private var stdinPipe: Pipe?
@@ -39,9 +69,13 @@ class AppState: ObservableObject {
         return streamKeyType == "fixed" ? fixedStreamKey : randomStreamKey
     }
     
-    var rtmpURL: String {
+    var rtmpURLs: [String] {
         let portStr = rtmpPort == 1935 ? "" : ":\(rtmpPort)"
-        return "rtmp://127.0.0.1\(portStr)/live/\(currentStreamKey)"
+        let ips = getLocalIPAddresses()
+        if ips.isEmpty {
+            return []
+        }
+        return ips.map { "rtmp://\($0)\(portStr)/live/\(currentStreamKey)" }
     }
     
     var hlsURL: String {
@@ -50,6 +84,7 @@ class AppState: ObservableObject {
     
     // Load Settings from UserDefaults
     func loadSettings() {
+        isLoadingSettings = true
         let defaults = UserDefaults.standard
         if let type = defaults.string(forKey: "streamKeyType") { streamKeyType = type }
         if let key = defaults.string(forKey: "fixedStreamKey") { fixedStreamKey = key }
@@ -60,10 +95,12 @@ class AppState: ObservableObject {
         let savedHttpPort = defaults.integer(forKey: "httpPort")
         if savedHttpPort > 0 { httpPort = savedHttpPort }
         launchAtLogin = defaults.bool(forKey: "launchAtLogin")
+        isLoadingSettings = false
     }
     
     // Save Settings to UserDefaults
     func saveSettings() {
+        guard !isLoadingSettings else { return }
         let defaults = UserDefaults.standard
         defaults.set(streamKeyType, forKey: "streamKeyType")
         defaults.set(fixedStreamKey, forKey: "fixedStreamKey")
@@ -139,18 +176,48 @@ class AppState: ObservableObject {
         
         self.process = proc
         
-        // Handle process output
+        // Handle process output asynchronously (Swift 5.5+)
         let outHandle = pipe.fileHandleForReading
-        outHandle.readabilityHandler = { [weak self] handle in
-            let data = handle.availableData
-            guard !data.isEmpty else { return }
-            if let output = String(data: data, encoding: .utf8) {
-                Task { @MainActor in
-                    self?.parseServerOutput(output)
+        Task { [weak self] in
+            guard let self = self else { return }
+            do {
+                for try await line in outHandle.bytes.lines {
+                    // Parse specific events efficiently in the background thread
+                    if line.contains("EADDRINUSE") || line.contains("Address already in use") {
+                        await MainActor.run {
+                            self.errorMessage = "Port conflict detected! RTMP or HTTP Port already in use."
+                            self.stopServer()
+                        }
+                    }
+                    else if line.contains("[STATUS] prePublish:") {
+                        let parts = line.components(separatedBy: ":")
+                        if parts.count >= 3 {
+                            let streamName = parts[2].components(separatedBy: "/").last ?? ""
+                            await MainActor.run {
+                                self.isStreaming = true
+                                self.activeStreamName = streamName
+                                self.sendNotification(title: "Stream Started", body: "Live stream '\(streamName)' is now active.")
+                            }
+                        }
+                    }
+                    else if line.contains("[STATUS] donePublish:") {
+                        let parts = line.components(separatedBy: ":")
+                        if parts.count >= 3 {
+                            let streamName = parts[2].components(separatedBy: "/").last ?? ""
+                            await MainActor.run {
+                                self.isStreaming = false
+                                self.activeStreamName = ""
+                                self.sendNotification(title: "Stream Ended", body: "Live stream '\(streamName)' has stopped.")
+                            }
+                        }
+                    }
                 }
+            } catch {
+                // Ignore read errors when pipe is closed
             }
         }
-        
+
+
         proc.terminationHandler = { [weak self] p in
             Task { @MainActor in
                 self?.isServerRunning = false
@@ -163,10 +230,14 @@ class AppState: ObservableObject {
         
         do {
             try proc.run()
-            isServerRunning = true
+            Task { @MainActor in
+                self.isServerRunning = true
+            }
         } catch {
-            errorMessage = "Failed to launch server-backend: \(error.localizedDescription)"
-            isServerRunning = false
+            Task { @MainActor in
+                self.errorMessage = "Failed to launch server-backend: \(error.localizedDescription)"
+                self.isServerRunning = false
+            }
         }
     }
     
@@ -181,49 +252,7 @@ class AppState: ObservableObject {
         isServerRunning = false
         isStreaming = false
     }
-    
-    private func parseServerOutput(_ output: String) {
-        let lines = output.components(separatedBy: .newlines)
-        for line in lines {
-            print("[Backend Log] \(line)")
-            
-            // Check for port conflicts or startup errors
-            if line.contains("EADDRINUSE") || line.contains("Address already in use") {
-                DispatchQueue.main.async {
-                    self.errorMessage = "Port conflict detected! RTMP or HTTP Port already in use."
-                    self.stopServer()
-                }
-            }
-            
-            // Parse streaming status
-            // Format: [STATUS] prePublish:id:/live/key
-            if line.contains("[STATUS] prePublish:") {
-                let parts = line.components(separatedBy: ":")
-                if parts.count >= 3 {
-                    let streamPath = parts[2]
-                    let streamName = streamPath.components(separatedBy: "/").last ?? ""
-                    DispatchQueue.main.async {
-                        self.isStreaming = true
-                        self.activeStreamName = streamName
-                        self.sendNotification(title: "Stream Started", body: "Live stream '\(streamName)' is now active.")
-                    }
-                }
-            }
-            
-            if line.contains("[STATUS] donePublish:") {
-                let parts = line.components(separatedBy: ":")
-                if parts.count >= 3 {
-                    let streamPath = parts[2]
-                    let streamName = streamPath.components(separatedBy: "/").last ?? ""
-                    DispatchQueue.main.async {
-                        self.isStreaming = false
-                        self.activeStreamName = ""
-                        self.sendNotification(title: "Stream Ended", body: "Live stream '\(streamName)' has stopped.")
-                    }
-                }
-            }
-        }
-    }
+
     
     private func sendNotification(title: String, body: String) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in

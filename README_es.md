@@ -1,139 +1,49 @@
-# Servidor RTMP local para macOS (Apple Silicon)
+# Local RTMP Server (macOS) v3.0
 
-Un servidor de transmisión RTMP nativo y ligero para macOS, diseñado específicamente para Macs con **Apple Silicon (M1/M2/M3/M4)**. Transmita desde OBS, dispositivos móviles o cualquier fuente compatible con RTMP a su máquina local.
+Un servidor RTMP nativo, ligero y de alto rendimiento para macOS. Construido con SwiftUI y Node Media Server, proporciona una manera sencilla de poner en marcha un servidor de transmisión en su red local, ideal para transmitir su pantalla, probar configuraciones de transmisión (como OBS) o enrutar señales de video en su red de área local.
 
-> **Nota sobre el Fork:** Este es un fork activamente mantenido de [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) (archivado), reconstruido para Apple Silicon con nuevas funciones y correcciones de errores.
+## ✨ Novedades en v3.0
 
-[English](README.md) | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md) | **Español** | [Français](README_fr.md)
+- **Interfaz nativa de macOS**: Totalmente reescrito en Swift y SwiftUI. Disfrute de una interfaz nativa hermosa, moderna y extremadamente fluida con efectos de cristal translúcido (macOS 13+).
+- **Soporte dinámico para múltiples IPs**: Detecta automáticamente y muestra todas las interfaces de red IPv4 activas en su máquina. Puede ver y copiar al instante las URLs RTMP exactas para diferentes redes (Wi-Fi, Ethernet).
+- **Vista previa en vivo HLS**: Ventana de vista previa nativa integrada sin latencia mediante AVPlayer. Al iniciar la transmisión desde OBS, puede monitorear su señal instantáneamente dentro de la aplicación.
+- **Motor de configuración inteligente**: Cambie su clave de transmisión o puertos de forma segura sobre la marcha. Si actualmente está transmitiendo, el servidor retrasará de forma inteligente el reinicio de la red hasta que finalice su transmisión, evitando desconexiones accidentales.
+- **Modos de Barra de menús y Dock**: Ejecute el servidor silenciosamente en segundo plano desde su barra de menús o manténgalo en su Dock como una aplicación estándar.
+- **Inicio automático**: Configure opcionalmente el servidor para que se inicie automáticamente y comience a alojar el servidor RTMP al arrancar el sistema.
+- **Soporte multilingüe**: Totalmente localizado en inglés, chino tradicional (繁體中文), japonés (日本語), español (Español) y francés (Français).
 
-## ✨ Características
+## 🚀 Instalación
 
-- **Soporte nativo de Apple Silicon** — Funciona de forma nativa en Macs con M1/M2/M3/M4 (ARM64)
-- **Servidor RTMP con un solo clic** — Inicie un servidor RTMP local instantáneamente en el puerto 1935
-- **Autodetección de IPs de red** — Descubre automáticamente todas las direcciones IPv4 locales (Wi-Fi, Ethernet, etc.) y muestra URLs de RTMP completas listas para copiar
-- **Gestión de claves de transmisión** — Elija entre claves de transmisión aleatorias (generadas automáticamente) o fijas personalizadas
-- **Vista previa en vivo HLS** — Previsualice las transmisiones activas directamente dentro de la aplicación mediante el reproductor HLS integrado
-- **Modo Barra de menú o Dock** — Ejecútelo como una aplicación ligera en la barra de menú o como una aplicación estándar de Dock
-- **Soporte de transmisión múltiple** — Maneje múltiples transmisiones RTMP simultáneas
-- **Información de transmisión en tiempo real** — Ver códec, resolución, velocidad de fotogramas, tráfico y recuento de clientes para cada transmisión activa
+1. Descargue el último archivo `Local RTMP Server 3.0.dmg` desde la página de Releases.
+2. Haga doble clic en el archivo DMG para montarlo.
+3. Arrastre el ícono de la aplicación **Local RTMP Server** a la carpeta de **Aplicaciones (Applications)**.
+4. Inicie la aplicación desde Launchpad o la carpeta de Aplicaciones.
 
-## 📋 Requisitos
+> **Nota**: Si macOS muestra una advertencia de seguridad indicando que no puede abrir una aplicación de un desarrollador no identificado, vaya a **Configuración del Sistema > Privacidad y seguridad** y haga clic en **Abrir de todos modos**.
 
-- **macOS** 11.0 (Big Sur) o posterior
-- **Apple Silicon** Mac (M1/M2/M3/M4) — o Mac Intel con Rosetta
-- **FFmpeg** (requerido para la transcodificación HLS)
+## 📖 Instrucciones de uso
 
-### Instalar FFmpeg
+1. **Iniciar el servidor**: Haga clic en el botón de reproducción (Play) en la aplicación. La luz de estado se pondrá verde.
+2. **Copiar la URL de RTMP**: La aplicación mostrará sus direcciones IP locales. Copie la URL (por ejemplo: `rtmp://192.168.1.100/live/mystreamkey`).
+3. **Configurar OBS**:
+   - Vaya a Configuración de OBS -> Emisión.
+   - Servicio: `Personalizado (Custom)`
+   - Servidor: `rtmp://192.168.1.100/live`
+   - Clave de retransmisión: `mystreamkey`
+4. **Comenzar a transmitir**: Haga clic en "Iniciar transmisión" en OBS.
+5. **Vista previa**: Haga clic en el botón "Vista previa en vivo" en la aplicación para monitorear su transmisión en tiempo real.
 
-```bash
-brew install ffmpeg
-```
+## 🛠 Configuración avanzada
+Presione `Cmd + ,` o haga clic en el ícono del engranaje para abrir la Configuración.
+- **Tipo de clave de transmisión**: Elija entre una clave fija y fácil de recordar, o deje que la aplicación genere automáticamente una clave aleatoria segura cada vez.
+- **Puertos personalizados**: Cambie el puerto RTMP predeterminado (1935) o el puerto HTTP HLS (8000) si entran en conflicto con otros servicios.
+- **Modo de visualización de la aplicación**: Alterne entre ejecutar la aplicación completamente en segundo plano (modo Barra de menús) o como una aplicación estándar en su Dock.
 
-## 📦 Instalación
+## ⚖️ Licencia y créditos
 
-### Opción 1: Descargar DMG (Recomendado)
+Partes de este software se derivan o están inspiradas en los siguientes proyectos de código abierto, utilizados bajo la Licencia MIT:
 
-1. Descargue el último `.dmg` de la página de [Lanzamientos](https://github.com/zpqnzpqn/macos-RTMP-Server/releases).
-2. Abra el DMG y arrastre la aplicación a su carpeta de Aplicaciones.
-3. Inicie **Local RTMP Server**.
+1. [mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) por Sallar Kaboli (Copyright (c) 2018)
+2. [macos-RTMP-Server](https://github.com/zpqnzpqn/macos-RTMP-Server) por zpqnzpqn (Copyright (c) 2026)
 
-> **Nota:** Dado que la aplicación no está firmada con código, es posible que deba hacer clic derecho → Abrir en el primer lanzamiento, o ir a Ajustes del sistema → Privacidad y seguridad → Abrir de todos modos.
-
-### Opción 2: Construir desde el código fuente
-
-```bash
-git clone https://github.com/zpqnzpqn/macos-RTMP-Server.git
-cd macos-RTMP-Server
-npm install
-npm start        # Ejecutar en modo de desarrollo
-npm run dist     # Construir DMG para ARM64
-```
-
-## 🚀 Uso
-
-### Transmisión básica
-
-1. Inicie la aplicación — comenzará el servidor RTMP automáticamente en el puerto `1935`.
-2. Copie una de las URLs de RTMP mostradas (por ejemplo, `rtmp://192.168.1.100/live/abc123`).
-3. En su software de transmisión (OBS, Streamlabs, etc.):
-   - Establezca **Servidor** a la URL copiada
-   - No se necesita una clave de transmisión separada — ya está incluida en la URL
-4. Inicie la transmisión — la aplicación mostrará estadísticas de la transmisión en tiempo real.
-
-### Transmisión desde otro dispositivo
-
-Para transmitir desde otro dispositivo en la misma red (por ejemplo, un teléfono usando [Larix Broadcaster](https://wmspanel.com/larix_broadcaster)):
-
-1. Use la URL de RTMP con la dirección IP local de su Mac (mostrada en la aplicación).
-2. Asegúrese de que ambos dispositivos estén en la misma red Wi-Fi/LAN.
-
-### Previsualizar una transmisión
-
-Haga clic en el botón **Vista previa (Stream Preview)** para ver la transmisión HLS en vivo directamente en la aplicación.
-
-### Cámara virtual (a través de OBS)
-
-Si necesita usar la transmisión RTMP como una cámara web virtual en aplicaciones como Zoom o Google Meet:
-
-1. Abra **OBS Studio** ([descárguelo aquí](https://obsproject.com/))
-2. Añada una **Fuente de medios** → Ingrese la URL de RTMP
-3. Haga clic en **Iniciar cámara virtual** en OBS
-4. En Zoom/Meet, seleccione **OBS Virtual Camera** como su cámara
-
-La aplicación incluye un enlace directo a la [Guía de cámara virtual de OBS](https://obsproject.com/kb/virtual-camera-guide) en la parte inferior de la interfaz.
-
-## ⚙️ Configuración
-
-Haga clic en el **icono de engranaje** (⚙️) para acceder a la configuración:
-
-| Configuración | Opciones | Descripción |
-|---------------|----------|-------------|
-| Clave de transmisión | Aleatoria / Fija | Aleatoria genera una nueva clave en cada inicio; Fija le permite establecer una clave persistente |
-| Ubicación de la aplicación | Barra de menú / Dock | Elija dónde aparece la aplicación — icono ligero en la barra de menú o ventana estándar de Dock |
-| Idioma | Predeterminado del sistema / Inglés / Chino tradicional / Japonés / Español / Francés | Cambia el idioma de visualización de la interfaz |
-
-> Cambiar el modo de ubicación de la aplicación o el idioma requiere reiniciar la aplicación (se maneja automáticamente al guardar).
-
-## 🔒 Notas de seguridad
-
-- **Solo red local** — El servidor RTMP está destinado a ser utilizado únicamente en redes locales de confianza. No hay autenticación en el puerto RTMP.
-- **Sin exposición a Internet** — No exponga el puerto 1935 a Internet sin medidas de seguridad adicionales (cortafuegos, VPN, etc.).
-- **Claves de transmisión** — Las claves de transmisión proporcionan una identificación básica de la transmisión, pero no son un mecanismo de seguridad. Cualquier persona en la misma red puede conectarse si conoce la URL.
-
-## 🛠 Detalles técnicos
-
-| Componente | Tecnología |
-|------------|------------|
-| Framework | Electron 30 |
-| Motor RTMP | Node-Media-Server |
-| Transcodificación | FFmpeg (HLS) |
-| Interfaz de usuario | HTML/CSS/JS nativo |
-| Plataforma | macOS ARM64 (Apple Silicon) |
-
-## 📝 Historial de cambios
-
-### v2.0.0 (Actual)
-- ✅ Portado a Apple Silicon (ARM64) de forma nativa
-- ✅ Electron actualizado a v30, electron-builder a v24
-- ✅ Autodetección de todas las IPs locales
-- ✅ Visualización de URLs RTMP completas (IP + clave de transmisión combinadas)
-- ✅ Añadida la gestión de claves de transmisión (aleatoria/fija)
-- ✅ Añadida la selección del modo Barra de menú / Dock
-- ✅ Añadida la vista previa de transmisión en vivo HLS
-- ✅ Añadida la guía de cámara virtual OBS
-- ✅ Corregidos múltiples errores de código y fugas de memoria
-- ✅ Seguridad mejorada (restricciones de CORS)
-- ✅ Parcheados problemas de compatibilidad de node-media-server
-
-## 📄 Licencia
-
-Este proyecto está bajo la [Licencia MIT](LICENSE).
-
-Creado originalmente por [Sallar Kaboli](https://github.com/sallar). Este fork es mantenido de forma independiente con soporte para Apple Silicon y características adicionales.
-
-## 🔗 Recursos relacionados
-
-- [OBS Studio](https://obsproject.com/) — Software de grabación y transmisión de código abierto
-- [Guía de cámara virtual de OBS](https://obsproject.com/kb/virtual-camera-guide) — Use OBS como una cámara web virtual
-- [Larix Broadcaster](https://wmspanel.com/larix_broadcaster) — Aplicación móvil de transmisión RTMP
-- [VLC Media Player](https://www.videolan.org/) — Reproduzca transmisiones RTMP con la URL `rtmp://`
+Este proyecto está bajo la Licencia MIT.
