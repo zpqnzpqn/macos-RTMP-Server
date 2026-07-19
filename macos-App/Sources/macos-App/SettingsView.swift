@@ -153,7 +153,7 @@ struct SettingsView: View {
                 Button(action: {
                     saveAndApply()
                 }) {
-                    Text(Localization.get("saveAndRelaunch", lang: language))
+                    Text(Localization.get("saveAndApply", lang: language))
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.accentColor)

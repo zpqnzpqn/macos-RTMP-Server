@@ -39,7 +39,8 @@ class AppState: ObservableObject {
     }
     
     var rtmpURL: String {
-        return "rtmp://127.0.0.1:\(rtmpPort)/live"
+        let portStr = rtmpPort == 1935 ? "" : ":\(rtmpPort)"
+        return "rtmp://127.0.0.1\(portStr)/live/\(currentStreamKey)"
     }
     
     var hlsURL: String {
@@ -79,14 +80,29 @@ class AppState: ObservableObject {
         
         // Find backend binary
         let fm = FileManager.default
-        var binaryPath = Bundle.main.path(forResource: "server-backend", ofType: nil)
+        var binaryPath: String? = nil
         
-        if binaryPath == nil || !fm.fileExists(atPath: binaryPath!) {
-            // Fallback for development/testing environments
+        if let execURL = Bundle.main.executableURL {
+            let backendURL = execURL.deletingLastPathComponent().appendingPathComponent("server-backend")
+            if fm.fileExists(atPath: backendURL.path) {
+                binaryPath = backendURL.path
+            }
+        }
+        
+        if binaryPath == nil {
+            if let resourcePath = Bundle.main.path(forResource: "server-backend", ofType: nil) {
+                if fm.fileExists(atPath: resourcePath) {
+                    binaryPath = resourcePath
+                }
+            }
+        }
+        
+        if binaryPath == nil {
             let possiblePaths = [
                 "./build/server-backend",
                 "../build/server-backend",
-                "./server-backend"
+                "./server-backend",
+                "../../build/server-backend"
             ]
             for path in possiblePaths {
                 let absolute = URL(fileURLWithPath: path).path

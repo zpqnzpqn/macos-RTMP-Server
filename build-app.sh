@@ -20,6 +20,7 @@ cp build/icon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
 cp build/Info.plist "$APP_DIR/Contents/Info.plist"
 
 echo "5. Code signing (local ad-hoc sign)..."
+xattr -cr "$APP_DIR"
 codesign --force --deep --sign - "$APP_DIR"
 
 echo "Build complete! App bundle created at: $APP_DIR"
