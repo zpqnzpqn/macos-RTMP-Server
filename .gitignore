@@ -70,3 +70,4 @@ macos-App/.build/
 
 # macOS app bundles
 *.app
+*.dmg
