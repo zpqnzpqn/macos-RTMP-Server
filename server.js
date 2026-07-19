@@ -2,36 +2,32 @@ const NodeMediaServer = require('node-media-server');
 const fs = require('fs');
 const { execSync } = require('child_process');
 
-// Parse CLI arguments
+// Parse command line arguments
 const args = process.argv.slice(2);
-const options = {
-  rtmpPort: 1935,
-  httpPort: 8000,
-  streamKey: null,
-  ffmpegPath: null,
-  mediaroot: './media'
-};
+let rtmpPort = 1935;
+let httpPort = 8000;
+let streamKey = '';
+let streamKeyType = 'random'; // 'random' | 'fixed'
 
-for (let i = 0; i < args.length; i++) {
-  const arg = args[i];
-  if (arg === '--rtmp-port' || arg === '-r') {
-    options.rtmpPort = parseInt(args[++i], 10);
-  } else if (arg === '--http-port' || arg === '-h') {
-    options.httpPort = parseInt(args[++i], 10);
-  } else if (arg === '--stream-key' || arg === '-k') {
-    options.streamKey = args[++i];
-  } else if (arg === '--ffmpeg-path' || arg === '-f') {
-    options.ffmpegPath = args[++i];
-  } else if (arg === '--mediaroot' || arg === '-m') {
-    options.mediaroot = args[++i];
+args.forEach(arg => {
+  if (arg.startsWith('--rtmp-port=')) {
+    rtmpPort = parseInt(arg.split('=')[1], 10);
+  } else if (arg.startsWith('--http-port=')) {
+    httpPort = parseInt(arg.split('=')[1], 10);
+  } else if (arg.startsWith('--key=')) {
+    streamKey = arg.split('=')[1];
+  } else if (arg.startsWith('--type=')) {
+    streamKeyType = arg.split('=')[1];
   }
-}
+});
 
-// Auto-detect FFmpeg path
+console.log(`[NodeMediaServer] Starting with config:`);
+console.log(`  RTMP Port: ${rtmpPort}`);
+console.log(`  HTTP Port: ${httpPort}`);
+console.log(`  Stream Key: ${streamKey}`);
+console.log(`  Stream Key Type: ${streamKeyType}`);
+
 function getFFmpegPath() {
-  if (options.ffmpegPath && fs.existsSync(options.ffmpegPath)) {
-    return options.ffmpegPath;
-  }
   if (fs.existsSync('/opt/homebrew/bin/ffmpeg')) {
     return '/opt/homebrew/bin/ffmpeg';
   }
@@ -45,23 +41,17 @@ function getFFmpegPath() {
   return '/usr/local/bin/ffmpeg'; // Fallback
 }
 
-// Ensure mediaroot directory exists
-if (!fs.existsSync(options.mediaroot)) {
-  fs.mkdirSync(options.mediaroot, { recursive: true });
-}
-
-// Configure NodeMediaServer
 const config = {
   rtmp: {
-    port: options.rtmpPort,
+    port: rtmpPort,
     chunk_size: 60000,
     gop_cache: true,
     ping: 60,
     ping_timeout: 30
   },
   http: {
-    port: options.httpPort,
-    mediaroot: options.mediaroot,
+    port: httpPort,
+    mediaroot: './media',
     allow_origin: '*'
   },
   trans: {
@@ -79,54 +69,45 @@ const config = {
 
 const nms = new NodeMediaServer(config);
 
-// Log and validate connections
 nms.on('prePublish', (id, StreamPath, args) => {
-  if (options.streamKey) {
-    const expectedPath = `/live/${options.streamKey}`;
-    if (StreamPath !== expectedPath) {
-      console.warn(`[RTMP Reject] Unauthorized stream key attempt: ${StreamPath}. Expected: ${expectedPath}`);
-      const session = nms.getSession(id);
-      if (session) {
+  console.log(`[STATUS] prePublish:${id}:${StreamPath}`);
+  
+  const session = nms.getSession(id);
+  const key = StreamPath.split('/').pop();
+
+  if (streamKeyType === 'fixed' || streamKeyType === 'random') {
+    if (key !== streamKey) {
+      console.log(`[NodeMediaServer] Rejected key mismatch. Expected: ${streamKey}, Got: ${key}`);
+      if (session && typeof session.reject === 'function') {
         session.reject();
       }
-      return;
+    } else {
+      console.log(`[NodeMediaServer] Accepted key match: ${key}`);
     }
   }
-  console.log(`[RTMP Accept] Stream published: id=${id} StreamPath=${StreamPath}`);
 });
 
 nms.on('donePublish', (id, StreamPath, args) => {
-  console.log(`[RTMP Terminate] Stream finished: id=${id} StreamPath=${StreamPath}`);
+  console.log(`[STATUS] donePublish:${id}:${StreamPath}`);
 });
 
-// Run server
 nms.run();
 
-console.log(`[RTMP Server] Core started.`);
-console.log(` - RTMP Port: ${options.rtmpPort}`);
-console.log(` - HTTP Port: ${options.httpPort}`);
-console.log(` - FFmpeg Path: ${config.trans.ffmpeg}`);
-console.log(` - Media Root: ${options.mediaroot}`);
-if (options.streamKey) {
-  console.log(` - Enforced Stream Key: ${options.streamKey}`);
-} else {
-  console.log(` - Stream Key Validation: Disabled (All keys allowed)`);
-}
+// Keep stdin open to detect parent exit
+process.stdin.resume();
+process.stdin.on('end', () => {
+  console.log('[NodeMediaServer] Stdin closed, exiting...');
+  process.exit(0);
+});
 
-// Zombie Process protection: Check if parent process (PPID) becomes 1 (adopted by init/launchd)
+// Periodic check for orphaned process
 setInterval(() => {
-  if (process.ppid === 1) {
-    console.log('[RTMP Server] Parent process exited (adopted by init). Exiting...');
+  try {
+    if (process.ppid === 1) {
+      console.log('[NodeMediaServer] Parent process died (ppid is 1), exiting...');
+      process.exit(0);
+    }
+  } catch (e) {
     process.exit(0);
   }
 }, 2000);
-
-// Clean shutdown signals
-process.on('SIGTERM', () => {
-  console.log('[RTMP Server] SIGTERM received. Shutting down...');
-  process.exit(0);
-});
-process.on('SIGINT', () => {
-  console.log('[RTMP Server] SIGINT received. Shutting down...');
-  process.exit(0);
-});
