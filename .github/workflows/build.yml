@@ -1,0 +1,58 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build macOS App
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Node.js Dependencies
+        run: npm install
+
+      - name: Rebuild Backend Binary
+        run: npx pkg server.js --targets node18-macos-arm64 --output build/server-backend
+
+      - name: Build Swift macOS App
+        run: |
+          chmod +x build-app.sh
+          ./build-app.sh
+
+      - name: Create DMG Installer
+        run: |
+          chmod +x create-dmg.sh
+          ./create-dmg.sh
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Local-RTMP-Server-DMG
+          path: "*.dmg"
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.dmg"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
