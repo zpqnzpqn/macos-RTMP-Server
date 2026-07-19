@@ -33,7 +33,7 @@ brew install ffmpeg
 
 ### Option 1 : Télécharger le DMG (Recommandé)
 
-1. Téléchargez le dernier fichier `.dmg` depuis la page des [Releases](https://github.com/zpqnzpqn/Local-RTMP-Server/releases).
+1. Téléchargez le dernier fichier `.dmg` depuis la page des [Releases](https://github.com/zpqnzpqn/macos-RTMP-Server/releases).
 2. Ouvrez le DMG et glissez-déposez l'application dans votre dossier Applications.
 3. Lancez **Local RTMP Server**.
 
@@ -42,8 +42,8 @@ brew install ffmpeg
 ### Option 2 : Build depuis les sources
 
 ```bash
-git clone https://github.com/zpqnzpqn/Local-RTMP-Server.git
-cd Local-RTMP-Server
+git clone https://github.com/zpqnzpqn/macos-RTMP-Server.git
+cd macos-RTMP-Server
 npm install
 npm start        # Exécuter en mode développement
 npm run dist     # Créer le DMG pour ARM64
