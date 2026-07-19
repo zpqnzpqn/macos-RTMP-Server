@@ -4,7 +4,7 @@
 
 > **Fork 說明：** 本專案是 [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server)（已封存）的活躍維護分支，重新針對 Apple Silicon 建構，並新增多項功能與修復。
 
-[English](README.md) | **繁體中文**
+[English](README.md) | **繁體中文** | [日本語](README_ja.md)
 
 ## ✨ 功能特色
 

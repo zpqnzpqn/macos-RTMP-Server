@@ -4,7 +4,7 @@ A lightweight, native RTMP streaming server for macOS, designed specifically for
 
 > **Fork Notice:** This is an actively maintained fork of [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) (archived), rebuilt for Apple Silicon with new features and bug fixes.
 
-**English** | [繁體中文](README_zh-TW.md)
+**English** | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)
 
 ## ✨ Features
 
