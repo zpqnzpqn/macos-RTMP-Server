@@ -2,13 +2,56 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Local Stream</title>
+    <title>Local RTMP Server</title>
     <link rel="stylesheet" href="./css/style.css" type="text/css">
   </head>
   <body>
-    <div class="mainFrame" id="streams">
+    <div class="mainFrame">
+      <div id="streams" style="flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: auto;"></div>
+      <div class="preview-container" id="previewContainer" style="display: none;">
+        <video id="previewVideo" autoplay muted controls></video>
+      </div>
+      <div class="preview-bar" id="previewBar">
+        <span class="preview-status-dot" id="previewStatusDot"></span>
+        <span class="preview-status-text" id="previewStatusText">預覽：已關閉</span>
+        <button id="previewToggleBtn" class="btn-preview-start">串流預覽</button>
+      </div>
+      <div class="obs-guide-bar">
+        <span class="obs-guide-text">如需虛擬攝影機，請使用</span>
+        <a href="#" id="obsGuideLink" class="obs-guide-link">OBS Virtual Camera ↗</a>
+      </div>
     </div>
-    <img src="./img/power.svg" title="Quit" class="quit">
+    <img src="./img/settings.svg" title="Settings" class="settings-btn" id="settingsBtn">
+    <img src="./img/power.svg" title="Quit" class="quit" id="quitBtn">
+
+    <div class="settings-overlay" id="settingsOverlay" style="display: none;">
+      <h3>Settings / 設定</h3>
+      <div class="settings-group">
+        <label>Stream Key / 金鑰類型</label>
+        <select id="streamKeyType">
+          <option value="random">Random / 隨機</option>
+          <option value="fixed">Fixed / 自訂固定</option>
+        </select>
+      </div>
+      <div class="settings-group" id="fixedKeyGroup">
+        <label>Fixed Stream Key / 固定金鑰</label>
+        <div class="input-with-btn">
+          <input type="text" id="fixedStreamKey" placeholder="Enter key...">
+          <button id="regenerateRandomBtn" type="button" class="btn-sub">還原隨機</button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <label>App Residence / 常駐位置</label>
+        <select id="appMode">
+          <option value="menubar">Menu Bar / 選單列</option>
+          <option value="dock">Dock / 應用程式列</option>
+        </select>
+      </div>
+      <div class="settings-actions">
+        <button id="saveSettingsBtn" type="button" class="btn-primary">儲存並重啟</button>
+        <button id="closeSettingsBtn" type="button" class="btn-secondary">關閉</button>
+      </div>
+    </div>
   </body>
   <script>
     require('../renderer.js')

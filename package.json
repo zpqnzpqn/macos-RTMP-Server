@@ -1,36 +1,38 @@
 {
   "name": "mac-local-rtmp-server",
   "productName": "Local RTMP Server",
-  "version": "1.2.0",
-  "description": "Local streaming server for macOS",
+  "version": "2.0.0",
+  "description": "Local RTMP streaming server for macOS (Apple Silicon / ARM64)",
   "main": "main.js",
   "build": {
-    "appId": "me.sallar.localRtmpServer",
+    "appId": "com.localrtmp.server",
     "mac": {
       "category": "public.app-category.video"
     }
   },
   "dependencies": {
-    "electron-context-menu": "^0.9.1",
-    "filesize": "^3.6.1",
-    "get-port": "^4.0.0",
-    "lodash": "^4.17.13",
-    "menubar": "^6.0.6",
-    "node-media-server": "^1.2.7",
+    "electron-context-menu": "^3.6.1",
+    "filesize": "^10.1.0",
+    "get-port": "^5.1.1",
+    "lodash": "^4.17.21",
+    "menubar": "^9.3.0",
+    "node-media-server": "^2.6.2",
     "shortid": "^2.2.8"
   },
   "devDependencies": {
-    "electron": "^5.0.6",
-    "electron-builder": "^20.44.4"
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
+    "patch-package": "^8.0.1"
   },
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder -p always",
+    "dist": "electron-builder --mac --arm64",
+    "postinstall": "patch-package",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sallar/mac-local-rtmp-server.git"
+    "url": "git+https://github.com/zpqnzpqn/Local-RTMP-Server.git"
   },
   "keywords": [
     "rtmp",
@@ -38,12 +40,14 @@
     "streaming",
     "media",
     "mac",
-    "electron"
+    "electron",
+    "apple-silicon",
+    "arm64"
   ],
-  "author": "Sallar Kaboli <sallar.kaboli@gmail.com>",
+  "author": "zpqnzpqn",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sallar/mac-local-rtmp-server/issues"
+    "url": "https://github.com/zpqnzpqn/Local-RTMP-Server/issues"
   },
-  "homepage": "https://github.com/sallar/mac-local-rtmp-server#readme"
+  "homepage": "https://github.com/zpqnzpqn/Local-RTMP-Server#readme"
 }

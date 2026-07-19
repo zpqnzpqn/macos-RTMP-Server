@@ -1,34 +1,138 @@
-# Local RTMP Server for macOS
+# Local RTMP Server for macOS (Apple Silicon)
 
-> [!NOTE]
-> Elgato has released a program called "OBS Link" which does the same thing (in a different way). You might want to [check that out](https://help.elgato.com/hc/en-us/articles/360031363132-OBS-Link-Setup). However I have noticed the same time lag in that method too.
+A lightweight, native RTMP streaming server for macOS, designed specifically for **Apple Silicon (M1/M2/M3/M4)** Macs. Stream from OBS, mobile devices, or any RTMP-compatible source to your local machine.
 
-> [!WARNING]
-> This project is archived and no longer maintaned.
+> **Fork Notice:** This is an actively maintained fork of [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) (archived), rebuilt for Apple Silicon with new features and bug fixes.
 
+**English** | [繁體中文](README_zh-TW.md)
 
-This is a simple RTMP server for macOS. You can stream videos using the provided RTMP URI and also use the live feed in other applications.
+## ✨ Features
 
-![](https://user-images.githubusercontent.com/768052/38555984-c2961dba-3cd0-11e8-8f4e-49270e2278ce.png)
+- **Native Apple Silicon Support** — Runs natively on M1/M2/M3/M4 Macs (ARM64)
+- **One-Click RTMP Server** — Launch a local RTMP server instantly on port 1935
+- **Auto-Detect Network IPs** — Automatically discovers all local IPv4 addresses (Wi-Fi, Ethernet, etc.) and displays ready-to-copy full RTMP URLs
+- **Stream Key Management** — Choose between random (auto-generated) or fixed custom stream keys
+- **HLS Live Preview** — Preview active streams directly within the app using the built-in HLS player
+- **Menu Bar or Dock Mode** — Run as a lightweight menu bar app or a standard Dock application
+- **Multi-Stream Support** — Handle multiple simultaneous RTMP streams
+- **Real-Time Stream Info** — View codec, resolution, framerate, traffic, and client count for each active stream
 
-## Usage
+## 📋 Requirements
 
-1. Download the latest version from the [releases page](https://github.com/sallar/mac-local-rtmp-server/releases).
-2. Once launched, the app sits in the menubar and runs on localhost (127.0.0.1).
-3. At launch, a randomly generated streaming URI is displayed. The important portion is the `rtmp://127.0.0.1/live/` base, and the part afterwards can be anything as long as it's unique.
-![](https://user-images.githubusercontent.com/2568736/41819405-dd699fac-778d-11e8-912b-1c2bdeb3258a.png)
-4. To send a stream to the RTMP server, specify the  `rtmp://` URI of your choice, and paste it into the streaming software as a destination. For example, `rtmp://127.0.0.1/live/sallar`.
-5. To send a stream from another device on the LAN, use Network Utility and specify the IP address of the local machine instead of localhost. For example, if the RTMP's machine's LAN address is `192.168.1.90`, specify the destination as `rtmp://192.168.1.90/live/sallar` from the other device.
-6. As soon as the stream starts, the app's window shows the state of the stream and its live feed URI.
-7. Note: multiple streams are supported! To view them, simply **scroll down** in the menubar.
+- **macOS** 11.0 (Big Sur) or later
+- **Apple Silicon** Mac (M1/M2/M3/M4) — or Intel Mac with Rosetta
+- **FFmpeg** (required for HLS transcoding)
 
-## Additional
+### Install FFmpeg
 
-* [Video guide for connecting Elgato Game Capture HD60 S to OBS Studio](https://www.youtube.com/watch?v=n94jGIXWWZQ&feature=youtu.be)
-* For using your phone or tablet as an RTMP source, check out [Larix Broadcaster](https://wmspanel.com/larix_broadcaster)
+```bash
+brew install ffmpeg
+```
 
-## License
+## 📦 Installation
 
-This software is released under the [MIT License](LICENSE)
+### Option 1: Download DMG (Recommended)
 
-Thanks to [Arash](https://twitter.com/_arashasghari) for the design.
+1. Download the latest `.dmg` from the [Releases](https://github.com/zpqnzpqn/Local-RTMP-Server/releases) page.
+2. Open the DMG and drag the app to your Applications folder.
+3. Launch **Local RTMP Server**.
+
+> **Note:** Since the app is not code-signed, you may need to right-click → Open on first launch, or go to System Settings → Privacy & Security → Open Anyway.
+
+### Option 2: Build from Source
+
+```bash
+git clone https://github.com/zpqnzpqn/Local-RTMP-Server.git
+cd mac-local-rtmp-server
+npm install
+npm start        # Run in development mode
+npm run dist     # Build DMG for ARM64
+```
+
+## 🚀 Usage
+
+### Basic Streaming
+
+1. Launch the app — it will start the RTMP server automatically on port `1935`.
+2. Copy one of the displayed RTMP URLs (e.g., `rtmp://192.168.1.100/live/abc123`).
+3. In your streaming software (OBS, Streamlabs, etc.):
+   - Set **Server** to the copied URL
+   - No separate stream key is needed — it's already included in the URL
+4. Start streaming — the app will show real-time stream statistics.
+
+### Streaming from Another Device
+
+To stream from another device on the same network (e.g., a phone using [Larix Broadcaster](https://wmspanel.com/larix_broadcaster)):
+
+1. Use the RTMP URL with your Mac's local IP address (shown in the app).
+2. Make sure both devices are on the same Wi-Fi/LAN.
+
+### Preview a Stream
+
+Click the **串流預覽 (Stream Preview)** button to watch the live HLS feed directly in the app.
+
+### Virtual Camera (via OBS)
+
+If you need to use the RTMP stream as a virtual webcam in apps like Zoom or Google Meet:
+
+1. Open **OBS Studio** ([download here](https://obsproject.com/))
+2. Add a **Media Source** → Enter the RTMP URL
+3. Click **Start Virtual Camera** in OBS
+4. In Zoom/Meet, select **OBS Virtual Camera** as your camera
+
+The app includes a direct link to the [OBS Virtual Camera Guide](https://obsproject.com/kb/virtual-camera-guide) at the bottom of the interface.
+
+## ⚙️ Settings
+
+Click the **gear icon** (⚙️) to access settings:
+
+| Setting | Options | Description |
+|---------|---------|-------------|
+| Stream Key | Random / Fixed | Random generates a new key each launch; Fixed lets you set a persistent key |
+| App Residence | Menu Bar / Dock | Choose where the app appears — lightweight menu bar tray or standard Dock window |
+
+> Changing the App Residence mode requires an app restart (handled automatically).
+
+## 🔒 Security Notes
+
+- **Local Network Only** — The RTMP server is intended for use on trusted local networks only. There is no authentication on the RTMP port.
+- **No Internet Exposure** — Do not expose port 1935 to the internet without additional security measures (firewall, VPN, etc.).
+- **Stream Keys** — Stream keys provide basic stream identification but are not a security mechanism. Anyone on the same network can connect if they know the URL.
+
+## 🛠 Technical Details
+
+| Component | Technology |
+|-----------|------------|
+| Framework | Electron 30 |
+| RTMP Engine | Node-Media-Server |
+| Transcoding | FFmpeg (HLS) |
+| UI | Native HTML/CSS/JS |
+| Platform | macOS ARM64 (Apple Silicon) |
+
+## 📝 Changelog
+
+### v2.0.0 (Current)
+- ✅ Ported to Apple Silicon (ARM64) natively
+- ✅ Upgraded Electron to v30, electron-builder to v24
+- ✅ Auto-detect all local network IPs
+- ✅ Display complete RTMP URLs (IP + stream key combined)
+- ✅ Added stream key management (random/fixed)
+- ✅ Added Menu Bar / Dock mode selection
+- ✅ Added HLS live stream preview
+- ✅ Added OBS Virtual Camera guidance
+- ✅ Fixed multiple code bugs and memory leaks
+- ✅ Improved security (CORS restrictions)
+- ✅ Patched node-media-server compatibility issues
+
+## 📄 License
+
+This project is released under the [MIT License](LICENSE).
+
+Originally created by [Sallar Kaboli](https://github.com/sallar). This fork is maintained independently with Apple Silicon support and additional features.
+
+## 🔗 Related Resources
+
+- [OBS Studio](https://obsproject.com/) — Open-source streaming and recording software
+- [OBS Virtual Camera Guide](https://obsproject.com/kb/virtual-camera-guide) — Use OBS as a virtual webcam
+- [Larix Broadcaster](https://wmspanel.com/larix_broadcaster) — Mobile RTMP streaming app
+- [VLC Media Player](https://www.videolan.org/) — Play RTMP streams with `rtmp://` URL

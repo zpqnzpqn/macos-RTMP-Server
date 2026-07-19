@@ -15,7 +15,7 @@ html {
   bottom: 0;
   right: 0;
   background: url(../img/frame.svg) center top no-repeat;
-  background-size: 400px 200px;
+  background-size: 100% 100%;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -56,8 +56,9 @@ html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  padding-top: 1.5rem;
 }
 
 .empty-state h2 {
@@ -123,4 +124,289 @@ html {
 .copyable a img {
   width: 100%;
   height: auto;
+}
+
+/* Settings Styling */
+.settings-btn {
+  width: 20px;
+  height: 20px;
+  position: fixed;
+  top: 25px;
+  right: 45px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity 0.2s, transform 0.3s;
+}
+.settings-btn:hover {
+  opacity: 1;
+  transform: rotate(30deg);
+}
+.quit:hover {
+  opacity: 1;
+}
+
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 245, 247, 0.96);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 100;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Myriad Set Pro", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+.settings-overlay h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #d2d2d7;
+  padding-bottom: 0.4rem;
+  color: #1d1d1f;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.8rem;
+}
+
+.settings-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #86868b;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-group select,
+.settings-group input[type="text"] {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #d2d2d7;
+  font-size: 0.85rem;
+  background: #fff;
+  outline: none;
+  color: #1d1d1f;
+  box-sizing: border-box;
+}
+
+.settings-group select:focus,
+.settings-group input[type="text"]:focus {
+  border-color: #0071e3;
+  box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.3);
+}
+
+.input-with-btn {
+  display: flex;
+  gap: 6px;
+}
+
+.input-with-btn input {
+  flex: 1;
+}
+
+.btn-sub {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  background: #e8e8ed;
+  border: 1px solid #d2d2d7;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #1d1d1f;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-sub:hover {
+  background: #d2d2d7;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.settings-actions button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background: #0071e3;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0077ed;
+}
+
+.btn-secondary {
+  background: #e8e8ed;
+  color: #1d1d1f;
+}
+
+.btn-secondary:hover {
+  background: #d2d2d7;
+}
+
+/* Preview and URL Container Styles */
+.preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 1.5rem;
+  background: rgba(255, 255, 255, 0.45);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.preview-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #8e8e93;
+  margin-right: 6px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.preview-status-dot.active {
+  background-color: #34c759;
+  box-shadow: 0 0 8px rgba(52, 199, 89, 0.6);
+}
+
+.preview-status-dot.error {
+  background-color: #ff3b30;
+  box-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
+}
+
+.preview-status-text {
+  font-size: 0.75rem;
+  color: #515154;
+  flex: 1;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+
+#previewToggleBtn {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  flex-shrink: 0;
+}
+
+.btn-preview-start {
+  background-color: #0071e3;
+  color: white;
+}
+
+.btn-preview-start:hover {
+  background-color: #0077ed;
+}
+
+.btn-preview-stop {
+  background-color: #ff3b30;
+  color: white;
+}
+
+.btn-preview-stop:hover {
+  background-color: #ff453a;
+}
+
+.url-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  gap: 4px;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.url-container-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 10px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#previewVideo {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  aspect-ratio: 16/9;
+  background-color: #1d1d1f;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+/* OBS Guide Bar */
+.obs-guide-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 1.5rem;
+  background: rgba(245, 245, 247, 0.6);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 4px;
+}
+
+.obs-guide-text {
+  font-size: 0.65rem;
+  color: #86868b;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.obs-guide-link {
+  font-size: 0.65rem;
+  color: #0071e3;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.obs-guide-link:hover {
+  text-decoration: underline;
 }

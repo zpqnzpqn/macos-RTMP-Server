@@ -1,0 +1,53 @@
+diff --git a/node_modules/node-media-server/src/node_core_utils.js b/node_modules/node-media-server/src/node_core_utils.js
+index ca2e65b..dbe4bee 100644
+--- a/node_modules/node-media-server/src/node_core_utils.js
++++ b/node_modules/node-media-server/src/node_core_utils.js
+@@ -4,7 +4,7 @@
+ //  Copyright (c) 2018 Nodemedia. All rights reserved.
+ //
+ const Crypto = require('crypto');
+-const { spawn } = require('child_process');
++const { spawn, exec } = require('child_process');
+ const context = require('./node_core_ctx');
+ 
+ function generateNewSessionID() {
+@@ -46,8 +46,27 @@ function verifyAuth(signStr, streamId, secretKey) {
+   return shv === ohv;
+ }
+ 
++function getFFmpegVersion(ffmpegPath) {
++  return new Promise((resolve) => {
++    exec(`"${ffmpegPath}" -version`, (error, stdout, stderr) => {
++      if (error) {
++        resolve('unknown');
++        return;
++      }
++      const firstLine = stdout.split('\n')[0];
++      resolve(firstLine);
++    });
++  });
++}
++
++function getFFmpegUrl() {
++  return 'https://ffmpeg.org/download.html';
++}
++
+ module.exports = {
+   generateNewSessionID,
+   verifyAuth,
+   genRandomName,
++  getFFmpegVersion,
++  getFFmpegUrl,
+ };
+diff --git a/node_modules/node-media-server/src/node_trans_server.js b/node_modules/node-media-server/src/node_trans_server.js
+index d5aca14..260647a 100644
+--- a/node_modules/node-media-server/src/node_trans_server.js
++++ b/node_modules/node-media-server/src/node_trans_server.js
+@@ -42,6 +42,7 @@ class NodeTransServer {
+     }
+     context.nodeEvent.on('postPublish', this.onPostPublish.bind(this));
+     context.nodeEvent.on('donePublish', this.onDonePublish.bind(this));
++    let version = await getFFmpegVersion(this.config.trans.ffmpeg);
+     Logger.log(`Node Media Trans Server started for apps: [ ${apps}] , MediaRoot: ${this.config.http.mediaroot}, ffmpeg version: ${version}`);
+   }
+ 
