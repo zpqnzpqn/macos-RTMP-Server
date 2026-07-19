@@ -29,12 +29,12 @@ const locales = {
     random: 'Random (Auto-generated)',
     fixed: 'Fixed Custom Key',
     fixedStreamKey: 'Fixed Stream Key',
-    regenerate: 'Regenerate Random Key',
+    regenerate: 'Random Key',
     appResidence: 'App Residence / Location',
     menubar: 'Menu Bar Tray Icon',
     dock: 'Dock (Standard Window)',
     saveAndRelaunch: 'Save & Restart App',
-    close: 'Close Panel',
+    close: 'Close (Without Saving)',
     noLiveStreams: 'No Live Streams Currently.',
     rtmpPublishUrl: 'RTMP Publish URL:',
     previewActive: 'Preview: Playing Stream',
@@ -60,12 +60,12 @@ const locales = {
     random: '隨機（自動產生）',
     fixed: '自訂固定金鑰',
     fixedStreamKey: '固定金鑰',
-    regenerate: '還原隨機',
+    regenerate: '隨機金鑰',
     appResidence: '常駐位置',
     menubar: '選單列常駐圖示',
     dock: 'Dock（標準視窗模式）',
     saveAndRelaunch: '儲存並重啟',
-    close: '關閉面版',
+    close: '關閉面版 (不儲存)',
     noLiveStreams: '目前沒有活躍的串流。',
     rtmpPublishUrl: 'RTMP 推流網址：',
     previewActive: '預覽：串流播放中',
@@ -91,12 +91,12 @@ const locales = {
     random: 'ランダム（自動生成）',
     fixed: 'カスタム固定キー',
     fixedStreamKey: '固定ストリームキー',
-    regenerate: 'ランダムキー再生成',
+    regenerate: 'ランダムキー',
     appResidence: '常駐場所',
     menubar: 'メニューバー常駐アイコン',
     dock: 'ドック（標準ウィンドウ）',
     saveAndRelaunch: '保存して再起動',
-    close: '閉じる',
+    close: '閉じる (保存しない)',
     noLiveStreams: '現在アクティブな配信はありません。',
     rtmpPublishUrl: 'RTMP 配信URL：',
     previewActive: 'プレビュー：配信再生中',
@@ -115,6 +115,68 @@ const locales = {
     urls: '配信URL',
     clients: '接続クライアント',
     waiting: 'ストリーム情報の取得中...'
+  },
+  es: {
+    settings: 'Configuración / Preferencias',
+    streamKeyType: 'Tipo de clave de transmisión',
+    random: 'Aleatoria (Generada automáticamente)',
+    fixed: 'Clave fija personalizada',
+    fixedStreamKey: 'Clave de transmisión fija',
+    regenerate: 'Clave aleatoria',
+    appResidence: 'Ubicación de la aplicación',
+    menubar: 'Icono en la barra de menú',
+    dock: 'Dock (Ventana estándar)',
+    saveAndRelaunch: 'Guardar y reiniciar aplicación',
+    close: 'Cerrar (Sin guardar)',
+    noLiveStreams: 'No hay transmisiones en vivo actualmente.',
+    rtmpPublishUrl: 'URL de publicación RTMP:',
+    previewActive: 'Vista previa: Reproduciendo transmisión',
+    previewInactive: 'Vista previa: En espera / Cerrada',
+    previewError: 'Vista previa: Transmisión no disponible',
+    previewBtnStart: 'Vista previa',
+    previewBtnStop: 'Detener vista previa',
+    obsGuide: 'Para cámara virtual, por favor use',
+    obsGuideLink: 'Cámara virtual de OBS ↗',
+    language: 'Idioma de la interfaz',
+    systemLang: 'Idioma predeterminado del sistema',
+    streamName: 'Nombre',
+    traffic: 'Tráfico',
+    audio: 'Audio',
+    video: 'Video',
+    urls: 'URLs',
+    clients: 'clientes',
+    waiting: 'Esperando metadatos de transmisión...'
+  },
+  fr: {
+    settings: 'Paramètres / Préférences',
+    streamKeyType: 'Type de clé de flux',
+    random: 'Aléatoire (Générée automatiquement)',
+    fixed: 'Clé personnalisée fixe',
+    fixedStreamKey: 'Clé de flux fixe',
+    regenerate: 'Clé aléatoire',
+    appResidence: 'Emplacement de l\'application',
+    menubar: 'Icône de la barre des menus',
+    dock: 'Dock (Fenêtre standard)',
+    saveAndRelaunch: 'Enregistrer et redémarrer',
+    close: 'Fermer (Sans enregistrer)',
+    noLiveStreams: 'Aucun flux en direct actuellement.',
+    rtmpPublishUrl: 'URL de publication RTMP :',
+    previewActive: 'Aperçu : Lecture du flux',
+    previewInactive: 'Aperçu : En veille / Fermé',
+    previewError: 'Aperçu : Flux indisponible',
+    previewBtnStart: 'Aperçu du flux',
+    previewBtnStop: 'Arrêter l\'aperçu',
+    obsGuide: 'Pour la caméra virtuelle, veuillez utiliser',
+    obsGuideLink: 'Caméra virtuelle OBS ↗',
+    language: 'Langue de l\'interface',
+    systemLang: 'Langue par défaut du système',
+    streamName: 'Nom',
+    traffic: 'Trafic',
+    audio: 'Audio',
+    video: 'Vidéo',
+    urls: 'URLs',
+    clients: 'clients',
+    waiting: 'En attente des métadonnées du flux...'
   }
 };
 
@@ -126,6 +188,10 @@ function getSelectedLanguage() {
       return 'zh';
     } else if (sysLang.startsWith('ja')) {
       return 'ja';
+    } else if (sysLang.startsWith('es')) {
+      return 'es';
+    } else if (sysLang.startsWith('fr')) {
+      return 'fr';
     } else {
       return 'en';
     }
@@ -242,6 +308,9 @@ const obsGuideLink = document.getElementById('obsGuideLink');
 function toggleFixedKeyInput() {
   const type = streamKeyTypeSelect.value;
   fixedKeyGroup.style.display = type === 'fixed' ? 'flex' : 'none';
+  if (type === 'fixed' && !fixedStreamKeyInput.value.trim()) {
+    fixedStreamKeyInput.value = shortid.generate();
+  }
 }
 
 streamKeyTypeSelect.addEventListener('change', toggleFixedKeyInput);
@@ -260,13 +329,7 @@ closeSettingsBtn.addEventListener('click', () => {
 });
 
 regenerateRandomBtn.addEventListener('click', () => {
-  randomStreamKey = shortid.generate();
-  streamKeyTypeSelect.value = 'random';
-  toggleFixedKeyInput();
-  appSettings.streamKeyType = 'random';
-  ipcRenderer.send('save-settings', appSettings);
-  settingsOverlay.style.display = 'none';
-  fetchStreamInfo(lastPort);
+  fixedStreamKeyInput.value = shortid.generate();
 });
 
 saveSettingsBtn.addEventListener('click', () => {

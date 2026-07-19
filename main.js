@@ -120,8 +120,8 @@ function changeMenubarState() {
   if (settings.appMode === 'dock') {
     app.dock.show();
     mainWindow = new BrowserWindow({
-      width: 400,
-      height: 420,
+      width: 480,
+      height: 460,
       resizable: true,
       title: "Local RTMP Server",
       webPreferences: {
@@ -136,11 +136,13 @@ function changeMenubarState() {
     mb = menubar({
       dir: ASSET_PATH,
       icon: path.resolve(ASSET_PATH, 'img/readyTemplate.png'),
-      height: 420,
+      width: 480,
+      height: 460,
       transparent: true,
       preloadWindow: true,
       browserWindow: {
-        height: 420,
+        width: 480,
+        height: 460,
         resizable: true,
         webPreferences: {
           nodeIntegration: true,

@@ -4,7 +4,7 @@
 
 > **Fork 說明：** 本專案是 [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server)（已封存）的活躍維護分支，重新針對 Apple Silicon 建構，並新增多項功能與修復。
 
-[English](README.md) | **繁體中文** | [日本語](README_ja.md)
+[English](README.md) | **繁體中文** | [日本語](README_ja.md) | [Español](README_es.md) | [Français](README_fr.md)
 
 ## ✨ 功能特色
 
@@ -90,6 +90,7 @@ npm run dist     # 建構 ARM64 DMG
 |----------|------|------|
 | 串流金鑰 | 隨機 / 固定 | 隨機模式每次啟動產生新金鑰；固定模式使用您自訂的金鑰 |
 | 常駐位置 | 選單列 / Dock | 選擇應用程式顯示位置 — 輕量選單列或標準 Dock 視窗 |
+| 介面語言 | 系統預設 / 英文 / 繁體中文 / 日本語 / 西班牙文 / 法文 | 切換應用程式顯示的語系 |
 
 > 切換常駐位置需要重新啟動應用程式（會自動處理）。
 

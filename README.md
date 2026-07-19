@@ -4,7 +4,7 @@ A lightweight, native RTMP streaming server for macOS, designed specifically for
 
 > **Fork Notice:** This is an actively maintained fork of [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) (archived), rebuilt for Apple Silicon with new features and bug fixes.
 
-**English** | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md)
+**English** | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md) | [Español](README_es.md) | [Français](README_fr.md)
 
 ## ✨ Features
 
@@ -90,6 +90,7 @@ Click the **gear icon** (⚙️) to access settings:
 |---------|---------|-------------|
 | Stream Key | Random / Fixed | Random generates a new key each launch; Fixed lets you set a persistent key |
 | App Residence | Menu Bar / Dock | Choose where the app appears — lightweight menu bar tray or standard Dock window |
+| Language | System Default / English / Traditional Chinese / Japanese / Spanish / French | Change the interface language of the application |
 
 > Changing the App Residence mode requires an app restart (handled automatically).
 
