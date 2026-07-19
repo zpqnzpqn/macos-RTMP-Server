@@ -1,139 +1,51 @@
-# macOS 本機 RTMP 串流伺服器（Apple Silicon 版）
-
-專為 **Apple Silicon (M1/M2/M3/M4)** Mac 打造的輕量級本機 RTMP 串流伺服器。支援從 OBS、手機或任何 RTMP 相容來源串流至您的 Mac。
-
-> **Fork 說明：** 本專案是 [sallar/mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server)（已封存）的活躍維護分支，重新針對 Apple Silicon 建構，並新增多項功能與修復。
+# Local RTMP Server (macOS) v3.0
 
 [English](README.md) | **繁體中文** | [日本語](README_ja.md) | [Español](README_es.md) | [Français](README_fr.md)
 
-## ✨ 功能特色
+這是一個輕量、原生且高效能的 macOS 專用 RTMP 伺服器。採用 SwiftUI 與 Node Media Server 打造，提供無縫的方式在本地網路中快速啟動串流伺服器，非常適合用來進行螢幕廣播、測試串流軟體（例如 OBS），或是在區域網路內傳輸影片訊號。
 
-- **原生 Apple Silicon 支援** — 在 M1/M2/M3/M4 Mac 上原生運行（ARM64）
-- **一鍵啟動 RTMP 伺服器** — 啟動後立即在 port 1935 開啟本機 RTMP 伺服器
-- **自動偵測網路 IP** — 自動搜尋所有本機 IPv4 位址（Wi-Fi、有線網路等），並顯示可直接複製的完整 RTMP 網址
-- **串流金鑰管理** — 可選擇隨機自動產生或自訂固定金鑰
-- **HLS 即時預覽** — 在應用程式內直接預覽正在進行的串流畫面
-- **選單列或 Dock 模式** — 可選擇常駐在選單列（輕量模式）或應用程式列（Dock 模式）
-- **多串流支援** — 同時處理多組 RTMP 串流
-- **即時串流資訊** — 查看每組串流的編碼格式、解析度、幀率、流量與連線數
+## ✨ v3.0 新功能亮點
 
-## 📋 系統需求
+- **macOS 原生介面**：使用 Swift 與 SwiftUI 徹底重寫。享受美觀、現代化且極度流暢的 macOS 原生介面與毛玻璃特效 (macOS 13+)。
+- **動態多重 IP 支援**：自動偵測並顯示您電腦上所有活躍的 IPv4 網路介面。您可以立即查看並複製不同網路環境 (Wi-Fi, 乙太網路) 下準確的 RTMP 網址。
+- **無延遲 HLS 預覽**：內建零延遲的原生 AVPlayer 預覽視窗。當您從 OBS 開始推流時，可以直接在 App 內即時監看畫面。
+- **智慧設定引擎**：隨時安全地更改串流金鑰或連接埠。如果您目前正在串流中，伺服器會智慧地延遲網路重啟程序直到串流結束，避免意外導致直播斷線。
+- **選單列與 Dock 模式**：讓伺服器安靜地在背景的「選單列 (Menu Bar)」中運作，或是像一般應用程式一樣常駐在您的 Dock 上。
+- **開機自動啟動**：可設定在系統開機時，自動啟動 App 並立即啟動 RTMP 伺服器。
+- **多國語系支援**：完整支援英文、繁體中文、日文 (日本語)、西班牙文 (Español) 與法文 (Français)。
 
-- **macOS** 11.0（Big Sur）或更新版本
-- **Apple Silicon** Mac（M1/M2/M3/M4）— Intel Mac 可透過 Rosetta 運行
-- **FFmpeg**（HLS 轉碼所需）
+## 🚀 安裝說明
 
-### 安裝 FFmpeg
+1. 從 Releases 頁面下載最新的 `Local RTMP Server 3.0.dmg`。
+2. 雙擊掛載 DMG 檔案。
+3. 將 **Local RTMP Server** 應用程式圖示拖曳至 **應用程式 (Applications)** 資料夾中。
+4. 從 Launchpad 或應用程式資料夾啟動 App。
 
-```bash
-brew install ffmpeg
-```
+> **注意**：如果 macOS 顯示「無法打開未識別開發者的應用程式」的安全性警告，請前往 **系統設定 > 隱私權與安全性**，並點擊 **強制打開 (Open Anyway)**。
 
-## 📦 安裝方式
+## 📖 使用教學
 
-### 方式一：下載 DMG 安裝檔（推薦）
+1. **啟動伺服器**：點擊 App 中的「播放 (Play)」按鈕，狀態燈號將會變為綠色。
+2. **複製 RTMP 網址**：App 會顯示您目前的本地 IP 位址，請複製該網址 (例如：`rtmp://192.168.1.100/live/mystreamkey`)。
+3. **設定 OBS**：
+   - 前往 OBS 設定 -> 串流。
+   - 服務：`自訂 (Custom)`
+   - 伺服器：`rtmp://192.168.1.100/live`
+   - 串流金鑰：`mystreamkey`
+4. **開始串流**：在 OBS 中按下「開始串流」。
+5. **預覽畫面**：點擊 App 中的「預覽串流」按鈕，即可即時監看您的串流畫面。
 
-1. 從 [Releases 頁面](https://github.com/zpqnzpqn/macos-RTMP-Server/releases) 下載最新的 `.dmg` 檔案。
-2. 打開 DMG，將應用程式拖入「應用程式」資料夾。
-3. 啟動 **Local RTMP Server**。
+## 🛠 進階設定
+按下 `Cmd + ,` 或點擊齒輪圖示開啟「設定」。
+- **串流金鑰類型**：選擇使用固定、好記的金鑰，或是讓 App 每次自動產生一組安全的隨機金鑰。
+- **自訂連接埠**：如果與其他服務發生衝突，您可以更改預設的 RTMP 連接埠 (1935) 或 HTTP HLS 連接埠 (8000)。
+- **應用程式顯示模式**：切換 App 要完全在背景執行 (選單列模式)，或是作為標準 App 顯示在 Dock 上。
 
-> **注意：** 由於此應用程式未經 Apple 簽署，首次啟動時可能需要按右鍵 → 打開，或前往「系統設定 → 隱私與安全性 → 仍然打開」。
+## ⚖️ 授權與版權宣告
 
-### 方式二：從原始碼建構
+本軟體的部分原始碼衍生或啟發自以下開源專案，並基於 MIT 授權條款使用：
 
-```bash
-git clone https://github.com/zpqnzpqn/macos-RTMP-Server.git
-cd macos-RTMP-Server
-npm install
-npm start        # 開發模式運行
-npm run dist     # 建構 ARM64 DMG
-```
+1. [mac-local-rtmp-server](https://github.com/sallar/mac-local-rtmp-server) 作者：Sallar Kaboli (Copyright (c) 2018)
+2. [macos-RTMP-Server](https://github.com/zpqnzpqn/macos-RTMP-Server) 作者：zpqnzpqn (Copyright (c) 2026)
 
-## 🚀 使用方式
-
-### 基本串流
-
-1. 啟動應用程式 — RTMP 伺服器將自動在 port `1935` 上啟動。
-2. 複製畫面上顯示的 RTMP 網址（例如 `rtmp://192.168.1.100/live/abc123`）。
-3. 在您的串流軟體中（OBS、Streamlabs 等）：
-   - 將 **伺服器** 設定為複製的網址
-   - 不需要另外輸入串流金鑰 — 已經包含在網址中
-4. 開始串流 — 應用程式會即時顯示串流統計數據。
-
-### 從其他裝置串流
-
-若要從同一網路的其他裝置串流（例如使用 [Larix Broadcaster](https://wmspanel.com/larix_broadcaster) 的手機）：
-
-1. 使用應用程式中顯示的本機 IP RTMP 網址。
-2. 確保兩台裝置在同一個 Wi-Fi / 區域網路。
-
-### 預覽串流
-
-點擊 **「串流預覽」** 按鈕，即可在應用程式內觀看即時 HLS 串流畫面。
-
-### 虛擬攝影機（透過 OBS）
-
-如果您需要在 Zoom 或 Google Meet 中使用 RTMP 串流作為虛擬攝影機：
-
-1. 開啟 **OBS Studio**（[點此下載](https://obsproject.com/)）
-2. 新增 **媒體來源** → 輸入 RTMP 網址
-3. 在 OBS 中點擊 **啟動虛擬攝影機**
-4. 在 Zoom / Meet 中選擇 **OBS Virtual Camera** 作為攝影機
-
-應用程式底部提供 [OBS 虛擬攝影機教學](https://obsproject.com/kb/virtual-camera-guide) 的直接連結。
-
-## ⚙️ 設定選項
-
-點擊 **齒輪圖示**（⚙️）進入設定：
-
-| 設定項目 | 選項 | 說明 |
-|----------|------|------|
-| 串流金鑰 | 隨機 / 固定 | 隨機模式每次啟動產生新金鑰；固定模式使用您自訂的金鑰 |
-| 常駐位置 | 選單列 / Dock | 選擇應用程式顯示位置 — 輕量選單列或標準 Dock 視窗 |
-| 介面語言 | 系統預設 / 英文 / 繁體中文 / 日本語 / 西班牙文 / 法文 | 切換應用程式顯示的語系 |
-
-> 切換常駐位置需要重新啟動應用程式（會自動處理）。
-
-## 🔒 安全注意事項
-
-- **僅限本機區域網路** — RTMP 伺服器僅供受信任的區域網路使用。RTMP 連接埠無認證機制。
-- **請勿暴露至網際網路** — 未經額外安全措施（防火牆、VPN 等），請勿將 port 1935 公開至網際網路。
-- **串流金鑰** — 串流金鑰提供基本的串流識別功能，但並非安全機制。同一網路上的任何人在知道網址的情況下都可以連接。
-
-## 🛠 技術詳情
-
-| 元件 | 技術 |
-|------|------|
-| 框架 | Electron 30 |
-| RTMP 引擎 | Node-Media-Server |
-| 轉碼 | FFmpeg（HLS） |
-| 介面 | 原生 HTML/CSS/JS |
-| 平台 | macOS ARM64（Apple Silicon） |
-
-## 📝 版本紀錄
-
-### v2.0.0（目前版本）
-- ✅ 原生移植至 Apple Silicon（ARM64）
-- ✅ 升級 Electron 至 v30、electron-builder 至 v24
-- ✅ 自動偵測所有本機網路 IP
-- ✅ 顯示完整 RTMP 網址（IP + 金鑰合併）
-- ✅ 新增串流金鑰管理（隨機 / 固定）
-- ✅ 新增選單列 / Dock 模式選擇
-- ✅ 新增 HLS 即時串流預覽
-- ✅ 新增 OBS 虛擬攝影機使用引導
-- ✅ 修復多個程式碼錯誤與記憶體洩漏
-- ✅ 強化安全性（CORS 限制）
-- ✅ 修補 node-media-server 相容性問題
-
-## 📄 授權條款
-
-本專案採用 [MIT License](LICENSE) 發佈。
-
-原始版本由 [Sallar Kaboli](https://github.com/sallar) 建立。本分支由 [zpqnzpqn](https://github.com/zpqnzpqn) 獨立維護，支援 Apple Silicon 並新增多項功能。
-
-## 🔗 相關資源
-
-- [OBS Studio](https://obsproject.com/) — 開源串流與錄影軟體
-- [OBS 虛擬攝影機教學](https://obsproject.com/kb/virtual-camera-guide) — 使用 OBS 作為虛擬攝影機
-- [Larix Broadcaster](https://wmspanel.com/larix_broadcaster) — 手機 RTMP 串流應用程式
-- [VLC Media Player](https://www.videolan.org/) — 使用 `rtmp://` 網址播放 RTMP 串流
+本專案採用 MIT 授權條款 (MIT License)。

@@ -1,5 +1,7 @@
 # Local RTMP Server (macOS) v3.0
 
+[English](README.md) | [繁體中文](README_zh-TW.md) | [日本語](README_ja.md) | [Español](README_es.md) | **Français**
+
 Un serveur RTMP natif, léger et performant spécialement conçu pour macOS. Construit avec SwiftUI et Node Media Server, il offre un moyen transparent de lancer un serveur de streaming sur votre réseau local, idéal pour diffuser votre écran, tester des configurations de streaming (comme OBS) ou router des flux vidéo sur votre réseau local.
 
 ## ✨ Nouveautés de la v3.0

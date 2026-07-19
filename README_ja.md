@@ -1,5 +1,7 @@
 # Local RTMP Server (macOS) v3.0
 
+[English](README.md) | [繁體中文](README_zh-TW.md) | **日本語** | [Español](README_es.md) | [Français](README_fr.md)
+
 軽量、ネイティブ、高性能なmacOS専用RTMPサーバーです。SwiftUIとNode Media Serverを利用して構築されており、ローカルネットワーク内でストリーミングサーバーを簡単に立ち上げることができます。画面配信、ストリーミングソフトウェア（OBSなど）のテスト、ローカルネットワークでの映像フィード転送に最適です。
 
 ## ✨ v3.0 の新機能
