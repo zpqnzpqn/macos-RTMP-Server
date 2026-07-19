@@ -22,6 +22,7 @@ class AppState: ObservableObject {
     
     private var process: Process?
     private var stdoutPipe: Pipe?
+    private var stdinPipe: Pipe?
     private var outputQueue = DispatchQueue(label: "com.localrtmp.server.output")
     
     init() {
@@ -131,6 +132,11 @@ class AppState: ObservableObject {
         proc.standardOutput = pipe
         proc.standardError = pipe
         self.stdoutPipe = pipe
+        
+        let inPipe = Pipe()
+        proc.standardInput = inPipe
+        self.stdinPipe = inPipe
+        
         self.process = proc
         
         // Handle process output
@@ -151,6 +157,7 @@ class AppState: ObservableObject {
                 self?.isStreaming = false
                 self?.process = nil
                 self?.stdoutPipe = nil
+                self?.stdinPipe = nil
             }
         }
         
@@ -170,6 +177,7 @@ class AppState: ObservableObject {
         }
         process = nil
         stdoutPipe = nil
+        stdinPipe = nil
         isServerRunning = false
         isStreaming = false
     }
