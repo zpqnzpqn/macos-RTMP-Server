@@ -63,3 +63,10 @@ typings/
 dist
 
 media
+
+# Swift build directories
+.build/
+macos-App/.build/
+
+# macOS app bundles
+*.app
