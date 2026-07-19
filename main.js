@@ -66,6 +66,11 @@ function changeMenubarState() {
 }
 
 (async () => {
+  // Ensure port 1935 is not occupied by any lingering orphaned server processes
+  try {
+    execSync('kill -9 $(lsof -t -i:1935) 2>/dev/null || true');
+  } catch (e) {}
+
   const port = await getPort();
 
   const nms = new NodeMediaServer({
