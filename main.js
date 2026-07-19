@@ -35,7 +35,8 @@ function getSettings() {
     return {
       streamKeyType: 'random', // 'random' | 'fixed'
       fixedStreamKey: 'mystreamkey',
-      appMode: 'menubar' // 'menubar' | 'dock'
+      appMode: 'menubar', // 'menubar' | 'dock'
+      language: 'system'
     };
   }
 }
@@ -78,7 +79,7 @@ function changeMenubarState() {
     http: {
       port,
       mediaroot: './media',
-      allow_origin: 'http://localhost'
+      allow_origin: '*'
     },
     trans: {
       ffmpeg: getFFmpegPath(),

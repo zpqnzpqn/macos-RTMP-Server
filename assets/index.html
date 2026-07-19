@@ -13,43 +13,52 @@
       </div>
       <div class="preview-bar" id="previewBar">
         <span class="preview-status-dot" id="previewStatusDot"></span>
-        <span class="preview-status-text" id="previewStatusText">預覽：已關閉</span>
-        <button id="previewToggleBtn" class="btn-preview-start">串流預覽</button>
+        <span class="preview-status-text" id="previewStatusText" data-i18n="previewInactive">預覽：已關閉</span>
+        <button id="previewToggleBtn" class="btn-preview-start" data-i18n="previewBtnStart">串流預覽</button>
       </div>
       <div class="obs-guide-bar">
-        <span class="obs-guide-text">如需虛擬攝影機，請使用</span>
-        <a href="#" id="obsGuideLink" class="obs-guide-link">OBS Virtual Camera ↗</a>
+        <span class="obs-guide-text" data-i18n="obsGuide">如需虛擬攝影機，請使用</span>
+        <a href="#" id="obsGuideLink" class="obs-guide-link" data-i18n="obsGuideLink">OBS Virtual Camera ↗</a>
       </div>
     </div>
     <img src="./img/settings.svg" title="Settings" class="settings-btn" id="settingsBtn">
     <img src="./img/power.svg" title="Quit" class="quit" id="quitBtn">
 
     <div class="settings-overlay" id="settingsOverlay" style="display: none;">
-      <h3>Settings / 設定</h3>
+      <h3 data-i18n="settings">Settings / 設定</h3>
       <div class="settings-group">
-        <label>Stream Key / 金鑰類型</label>
+        <label data-i18n="streamKeyType">Stream Key / 金鑰類型</label>
         <select id="streamKeyType">
-          <option value="random">Random / 隨機</option>
-          <option value="fixed">Fixed / 自訂固定</option>
+          <option value="random" data-i18n="random">Random / 隨機</option>
+          <option value="fixed" data-i18n="fixed">Fixed / 自訂固定</option>
         </select>
       </div>
       <div class="settings-group" id="fixedKeyGroup">
-        <label>Fixed Stream Key / 固定金鑰</label>
+        <label data-i18n="fixedStreamKey">Fixed Stream Key / 固定金鑰</label>
         <div class="input-with-btn">
           <input type="text" id="fixedStreamKey" placeholder="Enter key...">
-          <button id="regenerateRandomBtn" type="button" class="btn-sub">還原隨機</button>
+          <button id="regenerateRandomBtn" type="button" class="btn-sub" data-i18n="regenerate">還原隨機</button>
         </div>
       </div>
       <div class="settings-group">
-        <label>App Residence / 常駐位置</label>
+        <label data-i18n="appResidence">App Residence / 常駐位置</label>
         <select id="appMode">
-          <option value="menubar">Menu Bar / 選單列</option>
-          <option value="dock">Dock / 應用程式列</option>
+          <option value="menubar" data-i18n="menubar">Menu Bar / 選單列</option>
+          <option value="dock" data-i18n="dock">Dock / 應用程式列</option>
+        </select>
+      </div>
+      <div class="settings-group">
+        <label data-i18n="language">Language / 語言 / 言葉</label>
+        <select id="appLanguage">
+          <option value="system" data-i18n="systemLang">System Default / 系統預設</option>
+          <option value="en">English</option>
+          <option value="zh">繁體中文</option>
+          <option value="ja">日本語</option>
         </select>
       </div>
       <div class="settings-actions">
-        <button id="saveSettingsBtn" type="button" class="btn-primary">儲存並重啟</button>
-        <button id="closeSettingsBtn" type="button" class="btn-secondary">關閉</button>
+        <button id="saveSettingsBtn" type="button" class="btn-primary" data-i18n="saveAndRelaunch">儲存並重啟</button>
+        <button id="closeSettingsBtn" type="button" class="btn-secondary" data-i18n="close">關閉</button>
       </div>
     </div>
   </body>

@@ -6,11 +6,11 @@
     <div class="list">
       <% Object.keys(live).forEach(streamKey => { const stream = live[streamKey]; %>
         <ul>
-          <li><strong>Name:</strong> <code><%= stream.publisher.stream %></code> (<%= stream.subscribers.length %> clients)</li>
-          <li><strong>Traffic:</strong> <%= tools.filesize(stream.publisher.bytes) %></li>
-          <li><strong>Audio:</strong> <% if (stream.publisher.audio) { %><%= stream.publisher.audio.codec %> <%= stream.publisher.audio.samplerate / 1000 %>khz, <%= stream.publisher.audio.channels %> ch<% } else { %>Waiting...<% } %></li>
-          <li><strong>Video:</strong> <% if (stream.publisher.video) { %><%= stream.publisher.video.codec %> <%= [stream.publisher.video.width, stream.publisher.video.height].join('x') %> <%= stream.publisher.video.fps %>fps<% } else { %>Waiting...<% } %></li>
-          <li><strong>URLs:</strong>
+          <li><strong><%= lang.streamName %>:</strong> <code><%= stream.publisher.stream %></code> (<%= stream.subscribers.length %> <%= lang.clients %>)</li>
+          <li><strong><%= lang.traffic %>:</strong> <%= tools.filesize(stream.publisher.bytes) %></li>
+          <li><strong><%= lang.audio %>:</strong> <% if (stream.publisher.audio) { %><%= stream.publisher.audio.codec %> <%= stream.publisher.audio.samplerate / 1000 %>khz, <%= stream.publisher.audio.channels %> ch<% } else { %><%= lang.waiting %><% } %></li>
+          <li><strong><%= lang.video %>:</strong> <% if (stream.publisher.video) { %><%= stream.publisher.video.codec %> <%= [stream.publisher.video.width, stream.publisher.video.height].join('x') %> <%= stream.publisher.video.fps %>fps<% } else { %><%= lang.waiting %><% } %></li>
+          <li><strong><%= lang.urls %>:</strong>
             <div class="url-list">
               <% localIps.forEach(ip => { %>
                 <div class="copyable no-title" style="margin-bottom: 4px;">
@@ -28,10 +28,10 @@
   </div>
 <% } else { %>
   <div class="empty-state">
-    <h2>No Live Streams Currently.</h2>
+    <h2><%= lang.noLiveStreams %></h2>
     <section>
       <div class="url-container-block">
-        <label class="url-label" style="font-size: 0.75rem; color: #86868b; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 600; letter-spacing: 0.5px;">RTMP Publish URL:</label>
+        <label class="url-label" style="font-size: 0.75rem; color: #86868b; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 600; letter-spacing: 0.5px;"><%= lang.rtmpPublishUrl %></label>
         <div class="url-list">
           <% localIps.forEach(ip => { %>
             <div class="copyable no-title" style="margin-bottom: 5px; display: flex;">
