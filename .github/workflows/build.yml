@@ -25,6 +25,12 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Show environment
+        run: |
+          swift --version
+          xcode-select -p
+          node --version
+
       - name: Install Node.js Dependencies
         run: npm install
 
@@ -33,8 +39,22 @@ jobs:
 
       - name: Build Swift macOS App
         run: |
-          chmod +x build-app.sh
-          ./build-app.sh
+          cd macos-App
+          swift build -c release 2>&1
+          cd ..
+
+      - name: Create App Bundle
+        run: |
+          APP_DIR="Local RTMP Server.app"
+          mkdir -p "$APP_DIR/Contents/MacOS"
+          mkdir -p "$APP_DIR/Contents/Resources"
+          cp macos-App/.build/release/LocalRTMPServer "$APP_DIR/Contents/MacOS/Local RTMP Server"
+          cp build/server-backend "$APP_DIR/Contents/MacOS/server-backend"
+          cp build/icon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
+          cp build/Info.plist "$APP_DIR/Contents/Info.plist"
+          xattr -cr "$APP_DIR"
+          codesign --force --deep --sign - --entitlements build/LocalRTMPServer.entitlements "$APP_DIR"
+          echo "App bundle created."
 
       - name: Create DMG Installer
         run: |
@@ -56,3 +76,4 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
